@@ -1,33 +1,79 @@
 import React from "react";
 import { Text as RNText, StyleSheet, TextProps } from "react-native";
+import { useTheme } from "@/src/theme/themeContext";
 
 type CustomTextProps = TextProps & {
   children: React.ReactNode;
+  variant?: "primary" | "secondary";
 };
 
-const Header1 = ({ children, style, ...props }: CustomTextProps) => (
-  <RNText style={[styles.header1, style]} {...props}>
-    {children}
-  </RNText>
-);
+const Header1 = ({
+  children,
+  style,
+  variant = "primary",
+  ...props
+}: CustomTextProps) => {
+  const { colors } = useTheme();
+  const textColor =
+    variant === "primary" ? colors.textPrimary : colors.textSecondary;
 
-const Header2 = ({ children, style, ...props }: CustomTextProps) => (
-  <RNText style={[styles.header2, style]} {...props}>
-    {children}
-  </RNText>
-);
+  return (
+    <RNText style={[styles.header1, { color: textColor }, style]} {...props}>
+      {children}
+    </RNText>
+  );
+};
 
-const Body = ({ children, style, ...props }: CustomTextProps) => (
-  <RNText style={[styles.body, style]} {...props}>
-    {children}
-  </RNText>
-);
+const Header2 = ({
+  children,
+  style,
+  variant = "primary",
+  ...props
+}: CustomTextProps) => {
+  const { colors } = useTheme();
+  const textColor =
+    variant === "primary" ? colors.textPrimary : colors.textSecondary;
 
-const Subtitle = ({ children, style, ...props }: CustomTextProps) => (
-  <RNText style={[styles.subtitle, style]} {...props}>
-    {children}
-  </RNText>
-);
+  return (
+    <RNText style={[styles.header2, { color: textColor }, style]} {...props}>
+      {children}
+    </RNText>
+  );
+};
+
+const Body = ({
+  children,
+  style,
+  variant = "primary",
+  ...props
+}: CustomTextProps) => {
+  const { colors } = useTheme();
+  const textColor =
+    variant === "primary" ? colors.textPrimary : colors.textSecondary;
+
+  return (
+    <RNText style={[styles.body, { color: textColor }, style]} {...props}>
+      {children}
+    </RNText>
+  );
+};
+
+const Subtitle = ({
+  children,
+  style,
+  variant = "primary",
+  ...props
+}: CustomTextProps) => {
+  const { colors } = useTheme();
+  const textColor =
+    variant === "primary" ? colors.textPrimary : colors.textSecondary;
+
+  return (
+    <RNText style={[styles.subtitle, { color: textColor }, style]} {...props}>
+      {children}
+    </RNText>
+  );
+};
 
 export const Text = {
   Header1,

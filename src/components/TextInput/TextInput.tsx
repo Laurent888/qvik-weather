@@ -6,6 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { useTheme } from "@/src/theme/themeContext";
 
 interface TextInputProps extends RNTextInputProps {
   label?: string;
@@ -20,6 +21,7 @@ const TextInput = ({
   onBlur,
   ...props
 }: TextInputProps) => {
+  const { colors } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
 
   const handleFocus = (e: any) => {
@@ -32,17 +34,31 @@ const TextInput = ({
     onBlur?.(e);
   };
 
+  const themedStyles = {
+    label: {
+      color: colors.textSecondary,
+    },
+    input: {
+      backgroundColor: colors.backgroundColor,
+      color: colors.textPrimary,
+    },
+    inputFocused: {
+      backgroundColor: colors.surfaceColor,
+    },
+  };
+
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <Text style={[styles.label, themedStyles.label]}>{label}</Text>}
       <RNTextInput
         style={[
           styles.input,
-          isFocused && styles.inputFocused,
+          themedStyles.input,
+          isFocused && [styles.inputFocused, themedStyles.inputFocused],
           error && styles.inputError,
           style,
         ]}
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor={colors.textSecondary}
         onFocus={handleFocus}
         onBlur={handleBlur}
         {...props}
@@ -61,23 +77,19 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: "500",
-    color: "#374151",
     marginBottom: 6,
     letterSpacing: 0.3,
   },
   input: {
-    backgroundColor: "#F9FAFB",
     borderWidth: 1,
     borderColor: "#E5E7EB",
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 16,
-    color: "#1F2937",
   },
   inputFocused: {
     borderColor: "#6366F1",
-    backgroundColor: "#FFFFFF",
   },
   inputError: {
     borderColor: "#EF4444",
