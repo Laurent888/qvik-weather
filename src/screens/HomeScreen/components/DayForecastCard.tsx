@@ -1,36 +1,10 @@
-import { Text } from "@/src/components";
+import { Box, Text } from "@/src/components";
+import { ColdIcon, RainIcon, SunIcon, WarmIcon } from "@/src/components/icons";
 import { useTheme } from "@/src/theme/themeContext";
-import { getWeatherIcon } from "@/src/utils/fetchForecast";
+import { DailyForecast } from "@/src/utils/fetchForecast";
+import dayjs from "dayjs";
 import React from "react";
-import { Image, StyleSheet, View } from "react-native";
-
-export type DailyForecast = {
-  dt: number;
-  main: {
-    temp: number;
-    feels_like: number;
-    temp_min: number;
-    temp_max: number;
-    pressure: number;
-    sea_level: number;
-    grnd_level: number;
-    humidity: number;
-    temp_kf: number;
-  };
-  weather: {
-    id: number;
-    main: string;
-    description: string;
-    icon: string;
-  }[];
-  visibility: number;
-  pop: number;
-  rain?: number;
-  sys: {
-    pod: string;
-  };
-  dt_txt: string;
-};
+import { StyleSheet } from "react-native";
 
 type DayForecastCardProps = {
   forecast: DailyForecast;
@@ -51,16 +25,30 @@ const formatDay = (timestamp: number) => {
     return "Tomorrow";
   }
 
-  return date.toLocaleDateString("en-US", { weekday: "short" });
+  return dayjs.unix(timestamp).format("dddd");
 };
 
 const DayForecastCard = ({ forecast }: DayForecastCardProps) => {
   const { colors, theme } = useTheme();
 
-  const iconUrl = getWeatherIcon(forecast.weather[0]?.icon || "01d");
+  const weahterIcon = () => {
+    switch (forecast.weather[0].description) {
+      case "clear sky":
+        return <SunIcon color={colors.iconColor} />;
+      case "rain":
+        return <RainIcon color={colors.iconColor} />;
+      case "snow":
+        return <ColdIcon color={colors.iconColor} />;
+      case "cloudy":
+        return <WarmIcon color={colors.iconColor} />;
+      default:
+        return <SunIcon color={colors.iconColor} />;
+    }
+  };
+
   const dayName = formatDay(forecast.dt);
-  const minTemp = kelvinToCelsius(forecast.main.temp_min);
-  const maxTemp = kelvinToCelsius(forecast.main.temp_max);
+  const minTemp = kelvinToCelsius(forecast.temp.min);
+  const maxTemp = kelvinToCelsius(forecast.temp.max);
   const rainChance = Math.round(forecast.pop * 100);
   const rainAmount = forecast.rain ? `${forecast.rain.toFixed(1)}mm` : null;
 
@@ -70,7 +58,9 @@ const DayForecastCard = ({ forecast }: DayForecastCardProps) => {
   const accentColor = "#3B82F6";
 
   return (
-    <View
+    <Box
+      direction="row"
+      alignItems="center"
       style={[
         styles.card,
         {
@@ -83,37 +73,56 @@ const DayForecastCard = ({ forecast }: DayForecastCardProps) => {
       ]}
     >
       {/* Day Label */}
-      <Text.Subtitle style={[styles.dayLabel, { color: colors.textSecondary }]}>
-        {dayName}
-      </Text.Subtitle>
+      <Box style={styles.dayContainer}>
+        <Text.Body style={[styles.dayLabel, { color: colors.textPrimary }]}>
+          {dayName}
+        </Text.Body>
+        <Text.Subtitle style={{ color: colors.textSecondary }}>
+          {dayjs.unix(forecast.dt).format("MMM D")}
+        </Text.Subtitle>
+      </Box>
 
       {/* Weather Icon */}
-      <View style={styles.iconContainer}>
-        <Image
-          source={{ uri: iconUrl }}
-          style={styles.weatherIcon}
-          resizeMode="contain"
-        />
-      </View>
+      <Box
+        justifyContent="center"
+        alignItems="center"
+        style={styles.iconContainer}
+      >
+        {weahterIcon()}
+      </Box>
 
       {/* Temperature */}
-      <View style={styles.tempContainer}>
-        <Text.Header2 style={[styles.maxTemp, { color: colors.textPrimary }]}>
-          {maxTemp}°
-        </Text.Header2>
-        <Text.Body style={[styles.minTemp, { color: colors.textSecondary }]}>
-          {minTemp}°
-        </Text.Body>
-      </View>
+      <Box direction="row" alignItems="baseline" gap={12} flex={1}>
+        <Box direction="row" alignItems="baseline" gap={2}>
+          <Text.Subtitle
+            style={[styles.tempLabel, { color: colors.textSecondary }]}
+          >
+            H
+          </Text.Subtitle>
+          <Text.Header2 style={[styles.maxTemp, { color: colors.textPrimary }]}>
+            {maxTemp}°
+          </Text.Header2>
+        </Box>
+        <Box direction="row" alignItems="baseline" gap={2}>
+          <Text.Subtitle
+            style={[styles.tempLabel, { color: colors.textSecondary }]}
+          >
+            L
+          </Text.Subtitle>
+          <Text.Body style={[styles.minTemp, { color: colors.textSecondary }]}>
+            {minTemp}°
+          </Text.Body>
+        </Box>
+      </Box>
 
       {/* Rain Info */}
-      <View style={styles.rainContainer}>
-        <View style={styles.rainRow}>
-          <Text.Body style={[styles.rainIcon]}>💧</Text.Body>
+      <Box alignItems="flex-start" style={styles.rainContainer}>
+        <Box direction="row" alignItems="center" gap={4}>
+          <Text.Body style={styles.rainIcon}>💧</Text.Body>
           <Text.Subtitle style={[styles.rainChance, { color: accentColor }]}>
             {rainChance}%
           </Text.Subtitle>
-        </View>
+        </Box>
         {rainAmount && (
           <Text.Subtitle
             style={[styles.rainAmount, { color: colors.textSecondary }]}
@@ -121,8 +130,8 @@ const DayForecastCard = ({ forecast }: DayForecastCardProps) => {
             {rainAmount}
           </Text.Subtitle>
         )}
-      </View>
-    </View>
+      </Box>
+    </Box>
   );
 };
 
@@ -130,51 +139,42 @@ export default DayForecastCard;
 
 const styles = StyleSheet.create({
   card: {
-    width: 90,
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    borderRadius: 20,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    borderRadius: 16,
     borderWidth: 1,
-    alignItems: "center",
-    gap: 8,
+    gap: 12,
+  },
+  dayContainer: {
+    width: "28%",
   },
   dayLabel: {
-    fontSize: 13,
-    fontWeight: "600",
-    textTransform: "uppercase",
     letterSpacing: 0.5,
+    fontWeight: "600",
   },
   iconContainer: {
-    width: 56,
-    height: 56,
-    justifyContent: "center",
-    alignItems: "center",
+    width: 48,
+    height: 48,
   },
   weatherIcon: {
-    width: 52,
-    height: 52,
+    width: 65,
+    height: 65,
   },
-  tempContainer: {
-    alignItems: "center",
-    gap: 2,
+  tempLabel: {
+    fontSize: 11,
+    fontWeight: "500",
   },
   maxTemp: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "700",
-    lineHeight: 26,
+    lineHeight: 24,
   },
   minTemp: {
     fontSize: 14,
     fontWeight: "500",
   },
   rainContainer: {
-    alignItems: "center",
-    marginTop: 4,
-  },
-  rainRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
+    minWidth: 50,
   },
   rainIcon: {
     fontSize: 12,

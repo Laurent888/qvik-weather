@@ -1,4 +1,5 @@
 import { Box, Text, TextInput } from "@/src/components";
+import { DailyForecast } from "@/src/utils/fetchForecast";
 import {
   filterOutDuplicatesByCountryCode,
   GeocodingResponse,
@@ -7,7 +8,7 @@ import {
 import React, { useState } from "react";
 import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import DayForecastCard, { DailyForecast } from "./components/DayForecastCard";
+import DayForecastCard from "./components/DayForecastCard";
 import SuggestionItem from "./components/SuggestionItem";
 import useFetchWeather from "./hooks/useFetchWeather";
 
@@ -27,8 +28,8 @@ const HomeScreen = () => {
     if (text.length < 3) {
       setSuggestions([]);
     }
-    const trimmedText = text.trim();
-    setCity(trimmedText);
+
+    setCity(text);
   };
 
   const handleSubmit = async () => {
@@ -60,14 +61,19 @@ const HomeScreen = () => {
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={{ paddingTop: top, paddingHorizontal: 16 }}
+      contentContainerStyle={{
+        paddingTop: top + 16,
+        paddingHorizontal: 16,
+        paddingBottom: 32,
+      }}
     >
+      <Text.Header2 style={styles.searchTitle}>Search for a city</Text.Header2>
       <TextInput
-        label="City"
         value={city}
         onChangeText={handleChangeCity}
         placeholder="Enter city"
         onSubmitEditing={handleSubmit}
+        onClear={() => setCity("")}
         returnKeyType="search"
       />
 
@@ -92,20 +98,16 @@ const HomeScreen = () => {
       </Box>
 
       {/* Daily Forecast Cards */}
-      {data && data.list && data.list.length > 0 && (
+      {data && data.daily && data.daily.length > 0 && (
         <Box style={styles.forecastSection}>
           <Text.Header2 style={styles.sectionTitle}>
-            7-Day Forecast
+            {city} 7-Day Forecast
           </Text.Header2>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.forecastCardsContainer}
-          >
-            {data.list.map((dayForecast: DailyForecast, index: number) => (
+          <Box style={styles.forecastCardsContainer}>
+            {data.daily.map((dayForecast: DailyForecast, index: number) => (
               <DayForecastCard key={index} forecast={dayForecast} />
             ))}
-          </ScrollView>
+          </Box>
         </Box>
       )}
     </ScrollView>
@@ -118,11 +120,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  searchTitle: {
+    marginBottom: 16,
+  },
   suggestionsContainer: {
-    marginTop: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#E5E7EB",
+    marginTop: 8,
   },
   forecastSection: {
     marginTop: 24,
@@ -133,6 +135,5 @@ const styles = StyleSheet.create({
   },
   forecastCardsContainer: {
     gap: 12,
-    paddingRight: 16,
   },
 });

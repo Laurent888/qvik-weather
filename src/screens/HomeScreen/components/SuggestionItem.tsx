@@ -16,13 +16,13 @@ const SuggestionItem = ({ cityName, state, country, onPress }: Props) => {
   return (
     <Pressable onPress={onPress}>
       <Box
+        direction="row"
         hasPadding
         alignItems="center"
-        justifyContent="center"
         gap={4}
-        style={[styles.container, { backgroundColor: colors.surfaceColor }]}
+        style={[styles.container]}
       >
-        <Text.Body>{cityName}</Text.Body>
+        <Text.Body>{cityName},</Text.Body>
         {state && <Text.Body variant="secondary">{state}</Text.Body>}
         {country && <Text.Body variant="secondary">{country}</Text.Body>}
       </Box>
@@ -35,6 +35,5 @@ export default SuggestionItem;
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 12,
-    borderRadius: 8,
   },
 });

@@ -1,22 +1,31 @@
 import axios, { AxiosResponse } from "axios";
 
-const FORECAST_DAYS = 7;
-
-type Coord = {
-  lon: number;
-  lat: number;
-};
-
-type City = {
+type Weather = {
   id: number;
-  name: string;
-  coord: Coord;
-  country: string;
-  population: number;
-  timezone: number;
+  main: string;
+  description: string;
+  icon: string;
 };
 
-type Temperature = {
+type CurrentWeather = {
+  dt: number;
+  sunrise: number;
+  sunset: number;
+  temp: number;
+  feels_like: number;
+  pressure: number;
+  humidity: number;
+  dew_point: number;
+  uvi: number;
+  clouds: number;
+  visibility: number;
+  wind_speed: number;
+  wind_deg: number;
+  wind_gust: number;
+  weather: Weather[];
+};
+
+type DailyTemp = {
   day: number;
   min: number;
   max: number;
@@ -25,44 +34,44 @@ type Temperature = {
   morn: number;
 };
 
-type FeelsLike = {
+type DailyFeelsLike = {
   day: number;
   night: number;
   eve: number;
   morn: number;
 };
 
-type Weather = {
-  id: number;
-  main: string;
-  description: string;
-  icon: string;
-};
-
-type DailyForecast = {
+export type DailyForecast = {
   dt: number;
   sunrise: number;
   sunset: number;
-  temp: Temperature;
-  feels_like: FeelsLike;
+  moonrise: number;
+  moonset: number;
+  moon_phase: number;
+  summary: string;
+  temp: DailyTemp;
+  feels_like: DailyFeelsLike;
   pressure: number;
   humidity: number;
+  dew_point: number;
+  wind_speed: number;
+  wind_deg: number;
+  wind_gust: number;
   weather: Weather[];
-  speed: number;
-  deg: number;
-  gust: number;
   clouds: number;
   pop: number;
   rain?: number;
   snow?: number;
+  uvi: number;
 };
 
-type OpenWeatherMapForecastResponse = {
-  city: City;
-  cod: string;
-  message: number;
-  cnt: number;
-  list: DailyForecast[];
+type OpenWeatherMapOneCallResponse = {
+  lat: number;
+  lon: number;
+  timezone: string;
+  timezone_offset: number;
+  current: CurrentWeather;
+  daily: DailyForecast[];
 };
 
 export const fetchForecast = async ({
@@ -72,9 +81,9 @@ export const fetchForecast = async ({
   lat: number;
   lon: number;
 }) => {
-  const response: AxiosResponse<OpenWeatherMapForecastResponse> =
+  const response: AxiosResponse<OpenWeatherMapOneCallResponse> =
     await axios.get(
-      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&cnt=${FORECAST_DAYS}&appid=${process.env.EXPO_PUBLIC_OPEN_WEATHER_API_KEY}`
+      `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,alerts&appid=${process.env.EXPO_PUBLIC_OPEN_WEATHER_API_KEY}`
     );
 
   return response.data;

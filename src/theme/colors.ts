@@ -3,6 +3,7 @@ const light = {
   surfaceColor: "#FFFFFF",
   textPrimary: "#1F2937",
   textSecondary: "#6B7280",
+  iconColor: "#1F2937",
 };
 
 const dark = {
@@ -10,6 +11,7 @@ const dark = {
   surfaceColor: "#2D3748",
   textPrimary: "#FFFFFF",
   textSecondary: "#9CA3AF",
+  iconColor: "#FFFFFF",
 };
 
 export const colors = {

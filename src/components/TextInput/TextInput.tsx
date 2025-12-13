@@ -1,24 +1,26 @@
+import { useTheme } from "@/src/theme/themeContext";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React, { useState } from "react";
 import {
+  Pressable,
   TextInput as RNTextInput,
   TextInputProps as RNTextInputProps,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import { useTheme } from "@/src/theme/themeContext";
 
 interface TextInputProps extends RNTextInputProps {
-  label?: string;
   error?: string;
+  onClear?: () => void;
 }
 
 const TextInput = ({
-  label,
   error,
   style,
   onFocus,
   onBlur,
+  onClear,
   ...props
 }: TextInputProps) => {
   const { colors } = useTheme();
@@ -49,7 +51,6 @@ const TextInput = ({
 
   return (
     <View style={styles.container}>
-      {label && <Text style={[styles.label, themedStyles.label]}>{label}</Text>}
       <RNTextInput
         style={[
           styles.input,
@@ -63,6 +64,13 @@ const TextInput = ({
         onBlur={handleBlur}
         {...props}
       />
+      <Pressable onPress={onClear} style={styles.closeIcon}>
+        <MaterialCommunityIcons
+          name="close"
+          size={24}
+          color={colors.textSecondary}
+        />
+      </Pressable>
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
@@ -100,5 +108,10 @@ const styles = StyleSheet.create({
     color: "#EF4444",
     marginTop: 4,
     marginLeft: 4,
+  },
+  closeIcon: {
+    position: "absolute",
+    right: 16,
+    top: 14,
   },
 });
