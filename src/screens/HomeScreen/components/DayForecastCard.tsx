@@ -42,6 +42,7 @@ const DayForecastCard = ({ forecast }: DayForecastCardProps) => {
 
   const accentColor = "#3B82F6";
 
+  console.log(forecast.weather[0]?.main);
   return (
     <Box
       direction="row"
@@ -73,7 +74,11 @@ const DayForecastCard = ({ forecast }: DayForecastCardProps) => {
         alignItems="center"
         style={styles.iconContainer}
       >
-        <WeatherIcon weather={forecast.weather[0]?.main ?? "Clear"} size={65} />
+        <WeatherIcon
+          weather={forecast.weather[0]?.main ?? "Clear"}
+          size={50}
+          color={colors.iconColor}
+        />
       </Box>
 
       {/* Temperature */}

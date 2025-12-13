@@ -78,6 +78,7 @@ const TodayWeatherCard = ({
           <WeatherIcon
             weather={current.weather[0]?.main ?? "Clear"}
             size={80}
+            color={colors.iconColor}
           />
         </Box>
       </Box>

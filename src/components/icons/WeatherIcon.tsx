@@ -1,10 +1,10 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { StyleProp, ViewStyle } from "react-native";
 import Box from "../Box";
 import { ColdIcon } from "./ColdIcon";
 import { RainIcon } from "./RainIcon";
 import { SunIcon } from "./SunIcon";
-import { WarmIcon } from "./WarmIcon";
 
 type WeatherIconProps = {
   weather: string;
@@ -19,7 +19,7 @@ const WeatherIcon = ({
   color = "white",
   containerStyle,
 }: WeatherIconProps) => {
-  let icon = <SunIcon />;
+  let icon;
 
   switch (weather) {
     case "Clear":
@@ -32,8 +32,16 @@ const WeatherIcon = ({
       icon = <ColdIcon color={color} size={size} />;
       break;
     case "Clouds":
-      icon = <WarmIcon color={color} size={size} />;
+      icon = (
+        <MaterialCommunityIcons
+          name="cloud-outline"
+          color={color}
+          size={size * 0.9}
+        />
+      );
       break;
+    default:
+      icon = null;
   }
   return <Box style={containerStyle}>{icon}</Box>;
 };

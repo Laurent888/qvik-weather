@@ -1,4 +1,5 @@
 import { Box, Text, TextInput } from "@/src/components";
+import { useTheme } from "@/src/theme/themeContext";
 import { DailyForecast } from "@/src/utils/fetchForecast";
 import {
   filterOutDuplicatesByCountryCode,
@@ -6,7 +7,8 @@ import {
   getGeocodingByCity,
 } from "@/src/utils/geocoding";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DayForecastCard from "./components/DayForecastCard";
 import SuggestionItem from "./components/SuggestionItem";
@@ -15,11 +17,13 @@ import useFetchWeather from "./hooks/useFetchWeather";
 
 const HomeScreen = () => {
   const { top } = useSafeAreaInsets();
+  const { colors } = useTheme();
 
   const [city, setCity] = useState<string>("helsinki");
   const [suggestions, setSuggestions] = useState<GeocodingResponse>([]);
 
-  const { fetchWeatherData, data, error, selectedCity } = useFetchWeather();
+  const { fetchWeatherData, data, error, selectedCity, isFetching } =
+    useFetchWeather();
 
   // useEffect(() => {
   //   fetchWeatherData({ city: "madrid" });
@@ -46,7 +50,6 @@ const HomeScreen = () => {
   };
 
   const handleSelectSuggestion = (suggestion: GeocodingResponse[0]) => {
-    console.log("suggestion", suggestion);
     if (suggestion == null) {
       return;
     }
@@ -57,6 +60,64 @@ const HomeScreen = () => {
       lon: suggestion.lon,
     });
     setSuggestions([]);
+  };
+
+  const renderContent = () => {
+    if (suggestions.length > 0) {
+      return (
+        <Box style={styles.suggestionsContainer}>
+          {suggestions.map((suggestion) => (
+            <SuggestionItem
+              key={`${suggestion.name}-${suggestion.country}`}
+              cityName={suggestion.name}
+              state={suggestion.state}
+              country={suggestion.country}
+              onPress={() => handleSelectSuggestion(suggestion)}
+            />
+          ))}
+        </Box>
+      );
+    }
+
+    if (isFetching) {
+      return (
+        <Box
+          justifyContent="center"
+          alignItems="center"
+          flex={1}
+          style={{ paddingVertical: 50 }}
+        >
+          <ActivityIndicator size="large" color={colors.iconColor} />
+        </Box>
+      );
+    }
+
+    if (data != null && selectedCity != null) {
+      return (
+        <Animated.View entering={FadeIn}>
+          {/* Today's Weather */}
+          <Box style={styles.todaySection}>
+            <TodayWeatherCard
+              cityName={selectedCity}
+              current={data.current}
+              todayForecast={data.daily[0]}
+            />
+          </Box>
+
+          {/* Daily Forecast Cards */}
+          <Box style={styles.forecastSection}>
+            <Text.Header2 style={styles.sectionTitle}>
+              7-Day Forecast
+            </Text.Header2>
+            <Box style={styles.forecastCardsContainer}>
+              {data.daily.map((dayForecast: DailyForecast, index: number) => (
+                <DayForecastCard key={index} forecast={dayForecast} />
+              ))}
+            </Box>
+          </Box>
+        </Animated.View>
+      );
+    }
   };
 
   return (
@@ -78,54 +139,13 @@ const HomeScreen = () => {
         returnKeyType="search"
       />
 
-      {suggestions.length > 0 && (
-        <Box style={styles.suggestionsContainer}>
-          {suggestions.map((suggestion) => (
-            <SuggestionItem
-              key={`${suggestion.name}-${suggestion.country}`}
-              cityName={suggestion.name}
-              state={suggestion.state}
-              country={suggestion.country}
-              onPress={() => handleSelectSuggestion(suggestion)}
-            />
-          ))}
-        </Box>
-      )}
-
       <Box>
         {error && (
           <Text.Body style={{ color: "red" }}>{error.message}</Text.Body>
         )}
       </Box>
 
-      {/* Today's Weather */}
-      {data &&
-        data.current &&
-        data.daily &&
-        data.daily.length > 0 &&
-        selectedCity && (
-          <Box style={styles.todaySection}>
-            <TodayWeatherCard
-              cityName={selectedCity}
-              current={data.current}
-              todayForecast={data.daily[0]}
-            />
-          </Box>
-        )}
-
-      {/* Daily Forecast Cards */}
-      {data && data.daily && data.daily.length > 0 && (
-        <Box style={styles.forecastSection}>
-          <Text.Header2 style={styles.sectionTitle}>
-            7-Day Forecast
-          </Text.Header2>
-          <Box style={styles.forecastCardsContainer}>
-            {data.daily.map((dayForecast: DailyForecast, index: number) => (
-              <DayForecastCard key={index} forecast={dayForecast} />
-            ))}
-          </Box>
-        </Box>
-      )}
+      {renderContent()}
     </ScrollView>
   );
 };
