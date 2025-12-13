@@ -6,6 +6,7 @@ import {
   GeocodingResponse,
   getGeocodingByCity,
 } from "@/src/utils/geocoding";
+import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 import Animated, { FadeIn } from "react-native-reanimated";
@@ -18,7 +19,7 @@ import useFetchWeather from "./hooks/useFetchWeather";
 
 const HomeScreen = () => {
   const { top } = useSafeAreaInsets();
-  const { colors, theme, setTheme } = useTheme();
+  const { colors, theme } = useTheme();
 
   const [city, setCity] = useState<string>("helsinki");
   const [suggestions, setSuggestions] = useState<GeocodingResponse>([]);
@@ -129,7 +130,9 @@ const HomeScreen = () => {
         paddingHorizontal: 16,
         paddingBottom: 32,
       }}
+      keyboardShouldPersistTaps="handled"
     >
+      <StatusBar style={theme === "dark" ? "light" : "dark"} />
       <ThemeToggle />
 
       <Text.Header2 style={styles.searchTitle}>Search for a city</Text.Header2>
@@ -138,7 +141,10 @@ const HomeScreen = () => {
         onChangeText={handleChangeCity}
         placeholder="Search country, region or city"
         onSubmitEditing={handleSubmit}
-        onClear={() => setCity("")}
+        onClear={() => {
+          setCity("");
+          setSuggestions([]);
+        }}
         returnKeyType="search"
       />
 

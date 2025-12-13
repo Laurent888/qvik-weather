@@ -42,7 +42,6 @@ const DayForecastCard = ({ forecast }: DayForecastCardProps) => {
 
   const accentColor = "#3B82F6";
 
-  console.log(forecast.weather[0]?.main);
   return (
     <Box
       direction="row"
