@@ -7,8 +7,8 @@ const light = {
 };
 
 const dark = {
-  backgroundColor: "#1F2937",
-  surfaceColor: "#2D3748",
+  backgroundColor: "#001E36",
+  surfaceColor: "#0D345C",
   textPrimary: "#FFFFFF",
   textSecondary: "#9CA3AF",
   iconColor: "#FFFFFF",

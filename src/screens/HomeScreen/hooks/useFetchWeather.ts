@@ -7,6 +7,7 @@ const useFetchWeather = () => {
     lat: number;
     lon: number;
   } | null>(null);
+  const [selectedCity, setSelectedCity] = useState<string | null>(null);
 
   const { isPending, isError, data, error, refetch } = useQuery({
     queryKey: ["weather", coordinates],
@@ -40,6 +41,7 @@ const useFetchWeather = () => {
     lat: number;
     lon: number;
   }) => {
+    setSelectedCity(city);
     setCoordinates({ lat, lon });
   };
 
@@ -47,6 +49,7 @@ const useFetchWeather = () => {
     fetchWeatherData,
     data,
     error,
+    selectedCity,
   };
 };
 

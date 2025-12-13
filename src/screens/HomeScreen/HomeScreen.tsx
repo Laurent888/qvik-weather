@@ -10,6 +10,7 @@ import { ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DayForecastCard from "./components/DayForecastCard";
 import SuggestionItem from "./components/SuggestionItem";
+import TodayWeatherCard from "./components/TodayWeatherCard";
 import useFetchWeather from "./hooks/useFetchWeather";
 
 const HomeScreen = () => {
@@ -18,7 +19,7 @@ const HomeScreen = () => {
   const [city, setCity] = useState<string>("helsinki");
   const [suggestions, setSuggestions] = useState<GeocodingResponse>([]);
 
-  const { fetchWeatherData, data, error } = useFetchWeather();
+  const { fetchWeatherData, data, error, selectedCity } = useFetchWeather();
 
   // useEffect(() => {
   //   fetchWeatherData({ city: "madrid" });
@@ -97,11 +98,26 @@ const HomeScreen = () => {
         )}
       </Box>
 
+      {/* Today's Weather */}
+      {data &&
+        data.current &&
+        data.daily &&
+        data.daily.length > 0 &&
+        selectedCity && (
+          <Box style={styles.todaySection}>
+            <TodayWeatherCard
+              cityName={selectedCity}
+              current={data.current}
+              todayForecast={data.daily[0]}
+            />
+          </Box>
+        )}
+
       {/* Daily Forecast Cards */}
       {data && data.daily && data.daily.length > 0 && (
         <Box style={styles.forecastSection}>
           <Text.Header2 style={styles.sectionTitle}>
-            {city} 7-Day Forecast
+            7-Day Forecast
           </Text.Header2>
           <Box style={styles.forecastCardsContainer}>
             {data.daily.map((dayForecast: DailyForecast, index: number) => (
@@ -125,6 +141,9 @@ const styles = StyleSheet.create({
   },
   suggestionsContainer: {
     marginTop: 8,
+  },
+  todaySection: {
+    marginTop: 24,
   },
   forecastSection: {
     marginTop: 24,

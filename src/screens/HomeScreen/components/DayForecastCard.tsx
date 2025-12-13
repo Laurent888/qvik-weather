@@ -1,5 +1,5 @@
 import { Box, Text } from "@/src/components";
-import { ColdIcon, RainIcon, SunIcon, WarmIcon } from "@/src/components/icons";
+import WeatherIcon from "@/src/components/icons/WeatherIcon";
 import { useTheme } from "@/src/theme/themeContext";
 import { DailyForecast } from "@/src/utils/fetchForecast";
 import dayjs from "dayjs";
@@ -30,21 +30,6 @@ const formatDay = (timestamp: number) => {
 
 const DayForecastCard = ({ forecast }: DayForecastCardProps) => {
   const { colors, theme } = useTheme();
-
-  const weahterIcon = () => {
-    switch (forecast.weather[0].description) {
-      case "clear sky":
-        return <SunIcon color={colors.iconColor} />;
-      case "rain":
-        return <RainIcon color={colors.iconColor} />;
-      case "snow":
-        return <ColdIcon color={colors.iconColor} />;
-      case "cloudy":
-        return <WarmIcon color={colors.iconColor} />;
-      default:
-        return <SunIcon color={colors.iconColor} />;
-    }
-  };
 
   const dayName = formatDay(forecast.dt);
   const minTemp = kelvinToCelsius(forecast.temp.min);
@@ -88,7 +73,7 @@ const DayForecastCard = ({ forecast }: DayForecastCardProps) => {
         alignItems="center"
         style={styles.iconContainer}
       >
-        {weahterIcon()}
+        <WeatherIcon weather={forecast.weather[0]?.main ?? "Clear"} size={65} />
       </Box>
 
       {/* Temperature */}
