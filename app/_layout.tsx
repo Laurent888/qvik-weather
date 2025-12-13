@@ -9,8 +9,8 @@ import { StatusBar } from "expo-status-bar";
 import countries from "i18n-iso-countries";
 import "react-native-reanimated";
 
-import { useColorScheme } from "@/hooks/use-color-scheme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useColorScheme } from "react-native";
 
 countries.registerLocale(require("i18n-iso-countries/langs/en.json"));
 

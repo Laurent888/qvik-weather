@@ -1,6 +1,6 @@
 import { useTheme } from "@/src/theme/themeContext";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import React, { useState } from "react";
+import React from "react";
 import {
   Pressable,
   TextInput as RNTextInput,
@@ -24,17 +24,6 @@ const TextInput = ({
   ...props
 }: TextInputProps) => {
   const { colors } = useTheme();
-  const [isFocused, setIsFocused] = useState(false);
-
-  const handleFocus = (e: any) => {
-    setIsFocused(true);
-    onFocus?.(e);
-  };
-
-  const handleBlur = (e: any) => {
-    setIsFocused(false);
-    onBlur?.(e);
-  };
 
   const themedStyles = {
     label: {
@@ -55,13 +44,13 @@ const TextInput = ({
         style={[
           styles.input,
           themedStyles.input,
-          isFocused && [styles.inputFocused, themedStyles.inputFocused],
           error && styles.inputError,
+          { backgroundColor: colors.surfaceColor },
           style,
         ]}
         placeholderTextColor={colors.textSecondary}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
+        onFocus={onFocus}
+        onBlur={onBlur}
         {...props}
       />
       <Pressable onPress={onClear} style={styles.closeIcon}>

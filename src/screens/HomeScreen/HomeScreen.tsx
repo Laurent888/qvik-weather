@@ -12,12 +12,13 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DayForecastCard from "./components/DayForecastCard";
 import SuggestionItem from "./components/SuggestionItem";
+import ThemeToggle from "./components/ThemeToggle";
 import TodayWeatherCard from "./components/TodayWeatherCard";
 import useFetchWeather from "./hooks/useFetchWeather";
 
 const HomeScreen = () => {
   const { top } = useSafeAreaInsets();
-  const { colors } = useTheme();
+  const { colors, theme, setTheme } = useTheme();
 
   const [city, setCity] = useState<string>("helsinki");
   const [suggestions, setSuggestions] = useState<GeocodingResponse>([]);
@@ -122,18 +123,20 @@ const HomeScreen = () => {
 
   return (
     <ScrollView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.backgroundColor }]}
       contentContainerStyle={{
         paddingTop: top + 16,
         paddingHorizontal: 16,
         paddingBottom: 32,
       }}
     >
+      <ThemeToggle />
+
       <Text.Header2 style={styles.searchTitle}>Search for a city</Text.Header2>
       <TextInput
         value={city}
         onChangeText={handleChangeCity}
-        placeholder="Enter city"
+        placeholder="Search country, region or city"
         onSubmitEditing={handleSubmit}
         onClear={() => setCity("")}
         returnKeyType="search"
