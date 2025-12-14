@@ -1,5 +1,4 @@
 import { Box, Text } from "@/src/components";
-import { useTheme } from "@/src/theme/themeContext";
 import countries from "i18n-iso-countries";
 import React from "react";
 import { Pressable, StyleSheet } from "react-native";
@@ -12,12 +11,14 @@ type Props = {
 };
 
 const SuggestionItem = ({ cityName, state, country, onPress }: Props) => {
-  const { colors } = useTheme();
-
   const countryName = countries.getName(country ?? "", "en");
 
+  const accessibilityLabel = [cityName, state, countryName]
+    .filter(Boolean)
+    .join(", ");
+
   return (
-    <Pressable onPress={onPress}>
+    <Pressable onPress={onPress} accessibilityLabel={accessibilityLabel}>
       <Box
         direction="row"
         hasPadding
@@ -26,7 +27,7 @@ const SuggestionItem = ({ cityName, state, country, onPress }: Props) => {
         style={[styles.container]}
       >
         <Text.Body>{cityName},</Text.Body>
-        {state && <Text.Body variant="secondary">{state}</Text.Body>}
+        {state && <Text.Body variant="secondary">{state},</Text.Body>}
         {country && <Text.Body variant="secondary">{countryName}</Text.Body>}
       </Box>
     </Pressable>

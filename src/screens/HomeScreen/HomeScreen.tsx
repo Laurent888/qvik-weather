@@ -21,15 +21,11 @@ const HomeScreen = () => {
   const { top } = useSafeAreaInsets();
   const { colors, theme } = useTheme();
 
-  const [city, setCity] = useState<string>("helsinki");
+  const [city, setCity] = useState<string>("");
   const [suggestions, setSuggestions] = useState<GeocodingResponse>([]);
 
   const { fetchWeatherData, data, error, selectedCity, isFetching } =
     useFetchWeather();
-
-  // useEffect(() => {
-  //   fetchWeatherData({ city: "madrid" });
-  // }, []);
 
   const handleChangeCity = (text: string) => {
     if (text.length < 3) {

@@ -9,7 +9,7 @@ const useFetchWeather = () => {
   } | null>(null);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
 
-  const { isFetching, isPending, isError, data, error, refetch } = useQuery({
+  const { isFetching, data, error, refetch } = useQuery({
     queryKey: ["weather", coordinates],
     queryFn: async () => {
       if (coordinates == null) {

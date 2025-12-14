@@ -1,0 +1,31 @@
+appId: com.laurenttram88.qvikweather
+---
+- launchApp
+
+# Verify home screen is loaded
+- assertVisible: 'Search for a city'
+
+# Verify search input is visible
+- assertVisible: 'Search country, region or city'
+
+# Type a city name in the search field
+- tapOn: 'Search country, region or city'
+- inputText: 'Paris'
+
+# Submit search
+- pressKey: Enter
+
+# Wait for and tap on a suggestion
+- extendedWaitUntil:
+    visible: 'Paris, Ile-de-France, France'
+    timeout: 10000
+- tapOn: 'Paris, Ile-de-France, France'
+
+# Verify weather data is displayed
+- extendedWaitUntil:
+    visible: '7-Day Forecast'
+    timeout: 10000
+
+# Verify today and tomorrow are displayed
+- assertVisible: 'Today'
+- assertVisible: 'Tomorrow'
