@@ -89,5 +89,3 @@ yarn android
 | `yarn start`   | Start the Expo development server |
 | `yarn ios`     | Run on iOS Simulator              |
 | `yarn android` | Run on Android Emulator           |
-| `yarn web`     | Run in web browser                |
-| `yarn lint`    | Run ESLint                        |
