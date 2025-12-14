@@ -19,6 +19,7 @@ A simple weather app built with React Native and Expo.
 - TanStack React Query
 - Axios
 - React Native Reanimated
+- Testing with Maestro
 
 ## Getting Started
 

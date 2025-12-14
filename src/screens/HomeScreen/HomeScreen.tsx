@@ -119,6 +119,8 @@ const HomeScreen = () => {
       );
     }
 
+    console.log(JSON.stringify({ data: data?.daily }, null, 2));
+
     if (data != null && selectedCity != null) {
       return (
         <Animated.View entering={FadeIn}>

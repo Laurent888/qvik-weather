@@ -86,23 +86,15 @@ const TodayWeatherCard = ({
       {/* Min/Max Temperature */}
       <Box direction="row" gap={16} style={styles.minMaxContainer}>
         <Box direction="row" alignItems="center" gap={6}>
-          <Text.Subtitle style={[styles.tempLabel, { color: accentColor }]}>
-            H
-          </Text.Subtitle>
           <Text.Body style={[styles.tempValue, { color: colors.textPrimary }]}>
-            {maxTemp}°
+            Max: {maxTemp}°
           </Text.Body>
         </Box>
         <Box direction="row" alignItems="center" gap={6}>
-          <Text.Subtitle
-            style={[styles.tempLabel, { color: colors.textSecondary }]}
-          >
-            L
-          </Text.Subtitle>
           <Text.Body
             style={[styles.tempValue, { color: colors.textSecondary }]}
           >
-            {minTemp}°
+            Min: {minTemp}°
           </Text.Body>
         </Box>
       </Box>

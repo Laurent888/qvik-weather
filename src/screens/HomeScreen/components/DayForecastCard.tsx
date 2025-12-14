@@ -1,10 +1,11 @@
 import { Box, Text } from "@/src/components";
+import Collapsible from "@/src/components/Collapsible";
 import WeatherIcon from "@/src/components/icons/WeatherIcon";
 import { useTheme } from "@/src/theme/themeContext";
 import { DailyForecast } from "@/src/utils/fetchForecast";
 import dayjs from "dayjs";
-import React from "react";
-import { StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { Pressable, StyleSheet } from "react-native";
 
 type DayForecastCardProps = {
   forecast: DailyForecast;
@@ -31,7 +32,10 @@ const formatDay = (timestamp: number) => {
 const DayForecastCard = ({ forecast }: DayForecastCardProps) => {
   const { colors, theme } = useTheme();
 
+  const [expanded, setExpanded] = useState(false);
+
   const dayName = formatDay(forecast.dt);
+  const dayTemp = kelvinToCelsius(forecast.temp.day);
   const minTemp = kelvinToCelsius(forecast.temp.min);
   const maxTemp = kelvinToCelsius(forecast.temp.max);
   const rainChance = Math.round(forecast.pop * 100);
@@ -43,84 +47,91 @@ const DayForecastCard = ({ forecast }: DayForecastCardProps) => {
   const accentColor = "#3B82F6";
 
   return (
-    <Box
-      direction="row"
-      alignItems="center"
-      style={[
-        styles.card,
-        {
-          backgroundColor: cardBackground,
-          borderColor:
-            theme === "dark"
-              ? "rgba(255, 255, 255, 0.12)"
-              : "rgba(0, 0, 0, 0.06)",
-        },
-      ]}
-    >
-      {/* Day Label */}
-      <Box style={styles.dayContainer}>
-        <Text.Body style={[styles.dayLabel, { color: colors.textPrimary }]}>
-          {dayName}
-        </Text.Body>
-        <Text.Subtitle style={{ color: colors.textSecondary }}>
-          {dayjs.unix(forecast.dt).format("MMM D")}
-        </Text.Subtitle>
-      </Box>
-
-      {/* Weather Icon */}
+    <Pressable onPress={() => setExpanded(!expanded)}>
       <Box
-        justifyContent="center"
-        alignItems="center"
-        style={styles.iconContainer}
+        style={[
+          styles.card,
+          {
+            backgroundColor: cardBackground,
+            borderColor:
+              theme === "dark"
+                ? "rgba(255, 255, 255, 0.12)"
+                : "rgba(0, 0, 0, 0.06)",
+          },
+        ]}
       >
-        <WeatherIcon
-          weather={forecast.weather[0]?.main ?? "Clear"}
-          size={50}
-          color={colors.iconColor}
-        />
-      </Box>
+        <Box direction="row" alignItems="center" justifyContent="space-between">
+          {/* Day Label */}
+          <Box style={styles.dayContainer}>
+            <Text.Body style={[styles.dayLabel, { color: colors.textPrimary }]}>
+              {dayName}
+            </Text.Body>
+            <Text.Subtitle style={{ color: colors.textSecondary }}>
+              {dayjs.unix(forecast.dt).format("MMM D")}
+            </Text.Subtitle>
+          </Box>
 
-      {/* Temperature */}
-      <Box direction="row" alignItems="baseline" gap={12} flex={1}>
-        <Box direction="row" alignItems="baseline" gap={2}>
-          <Text.Subtitle
-            style={[styles.tempLabel, { color: colors.textSecondary }]}
+          {/* Weather Icon and Temperature */}
+          <Box
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            style={styles.iconContainer}
           >
-            H
-          </Text.Subtitle>
-          <Text.Header2 style={[styles.maxTemp, { color: colors.textPrimary }]}>
-            {maxTemp}°
-          </Text.Header2>
-        </Box>
-        <Box direction="row" alignItems="baseline" gap={2}>
-          <Text.Subtitle
-            style={[styles.tempLabel, { color: colors.textSecondary }]}
-          >
-            L
-          </Text.Subtitle>
-          <Text.Body style={[styles.minTemp, { color: colors.textSecondary }]}>
-            {minTemp}°
-          </Text.Body>
-        </Box>
-      </Box>
+            <WeatherIcon
+              weather={forecast.weather[0]?.main ?? "Clear"}
+              size={50}
+              color={colors.iconColor}
+            />
 
-      {/* Rain Info */}
-      <Box alignItems="flex-start" style={styles.rainContainer}>
-        <Box direction="row" alignItems="center" gap={4}>
-          <Text.Body style={styles.rainIcon}>💧</Text.Body>
-          <Text.Subtitle style={[styles.rainChance, { color: accentColor }]}>
-            {rainChance}%
-          </Text.Subtitle>
+            <Text.Header2 style={[{ color: colors.textSecondary }]}>
+              {dayTemp}°
+            </Text.Header2>
+          </Box>
+
+          {/* Rain Info */}
+          <Box alignItems="flex-start" style={styles.rainContainer}>
+            <Box direction="row" alignItems="center" gap={4}>
+              <Text.Body style={styles.rainIcon}>💧</Text.Body>
+              <Text.Subtitle
+                style={[styles.rainChance, { color: accentColor }]}
+              >
+                {rainChance}%
+              </Text.Subtitle>
+            </Box>
+            {rainAmount && (
+              <Text.Subtitle
+                style={[styles.rainAmount, { color: colors.textSecondary }]}
+              >
+                {rainAmount}
+              </Text.Subtitle>
+            )}
+          </Box>
         </Box>
-        {rainAmount && (
-          <Text.Subtitle
-            style={[styles.rainAmount, { color: colors.textSecondary }]}
+
+        {/* Temperature min max */}
+        <Collapsible expanded={expanded}>
+          <Box
+            direction="row"
+            alignItems="baseline"
+            gap={12}
+            flex={1}
+            style={{ paddingTop: 32 }}
           >
-            {rainAmount}
-          </Text.Subtitle>
-        )}
+            <Box direction="row" alignItems="baseline" gap={2}>
+              <Text.Header2 variant="secondary" style={[styles.maxTemp]}>
+                Max: {maxTemp}°
+              </Text.Header2>
+            </Box>
+            <Box direction="row" alignItems="baseline" gap={2}>
+              <Text.Header2 variant="secondary" style={styles.maxTemp}>
+                Min: {minTemp}°
+              </Text.Header2>
+            </Box>
+          </Box>
+        </Collapsible>
       </Box>
-    </Box>
+    </Pressable>
   );
 };
 
@@ -132,7 +143,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 16,
     borderWidth: 1,
-    gap: 12,
   },
   dayContainer: {
     width: "28%",
@@ -141,10 +151,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     fontWeight: "600",
   },
-  iconContainer: {
-    width: 48,
-    height: 48,
-  },
+  iconContainer: { gap: 12 },
   weatherIcon: {
     width: 65,
     height: 65,
