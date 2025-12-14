@@ -113,6 +113,8 @@ const HomeScreen = () => {
           alignItems="center"
           flex={1}
           style={{ paddingVertical: 50 }}
+          accessible
+          accessibilityLabel="Loading weather data"
         >
           <ActivityIndicator size="large" color={colors.iconColor} />
         </Box>
@@ -158,6 +160,7 @@ const HomeScreen = () => {
       keyboardShouldPersistTaps="handled"
     >
       <StatusBar style={theme === "dark" ? "light" : "dark"} />
+
       <ThemeToggle />
 
       <Text.Header2 style={styles.searchTitle}>Search for a city</Text.Header2>
@@ -173,11 +176,15 @@ const HomeScreen = () => {
         returnKeyType="search"
       />
 
-      <Box>
-        {error && (
+      {error && (
+        <Box
+          accessible
+          accessibilityRole="alert"
+          accessibilityLabel={`Error: ${error.message}`}
+        >
           <Text.Body style={{ color: "red" }}>{error.message}</Text.Body>
-        )}
-      </Box>
+        </Box>
+      )}
 
       {renderContent()}
     </ScrollView>

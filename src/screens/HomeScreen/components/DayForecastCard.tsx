@@ -46,8 +46,17 @@ const DayForecastCard = ({ forecast }: DayForecastCardProps) => {
 
   const accentColor = "#3B82F6";
 
+  const accessibilityLabel = `${dayName}, ${dayTemp} degrees, ${rainChance}% chance of rain${
+    expanded ? ", expanded" : ""
+  }`;
+
   return (
-    <Pressable onPress={() => setExpanded(!expanded)}>
+    <Pressable
+      onPress={() => setExpanded(!expanded)}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint="Double tap to show more details"
+      accessibilityRole="button"
+    >
       <Box
         style={[
           styles.card,

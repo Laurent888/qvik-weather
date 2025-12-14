@@ -21,6 +21,7 @@ const ThemeToggle = () => {
       <Toggle
         value={theme === "dark"}
         onValueChange={(isDark) => setTheme(isDark ? "dark" : "light")}
+        accessibilityLabel={`Dark mode ${theme === "dark" ? "on" : "off"}`}
       />
     </Box>
   );

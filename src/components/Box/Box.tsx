@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleProp, View, ViewStyle } from "react-native";
+import { AccessibilityRole, StyleProp, View, ViewStyle } from "react-native";
 
 type FlexAlign = "flex-start" | "flex-end" | "center" | "stretch" | "baseline";
 type FlexJustify =
@@ -33,6 +33,10 @@ interface BoxProps {
   borderRadius?: number;
   /** Custom style override */
   style?: StyleProp<ViewStyle>;
+  /** Accessibility props */
+  accessible?: boolean;
+  accessibilityLabel?: string;
+  accessibilityRole?: AccessibilityRole;
 }
 
 const Box = ({
@@ -47,6 +51,9 @@ const Box = ({
   backgroundColor,
   borderRadius,
   style,
+  accessible,
+  accessibilityLabel,
+  accessibilityRole,
 }: BoxProps) => {
   const boxStyle: ViewStyle = {
     flexDirection: direction,
@@ -60,7 +67,16 @@ const Box = ({
     ...(borderRadius !== undefined && { borderRadius }),
   };
 
-  return <View style={[boxStyle, style]}>{children}</View>;
+  return (
+    <View
+      style={[boxStyle, style]}
+      accessible={accessible}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole={accessibilityRole}
+    >
+      {children}
+    </View>
+  );
 };
 
 export default Box;

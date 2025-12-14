@@ -53,7 +53,12 @@ const TextInput = ({
         onBlur={onBlur}
         {...props}
       />
-      <Pressable onPress={onClear} style={styles.closeIcon}>
+      <Pressable
+        onPress={onClear}
+        style={styles.closeIcon}
+        accessibilityLabel="Clear search"
+        accessibilityRole="button"
+      >
         <MaterialCommunityIcons
           name="close"
           size={24}

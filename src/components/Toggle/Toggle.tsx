@@ -22,6 +22,8 @@ interface ToggleProps {
   thumbColor?: string;
   /** Custom style override */
   style?: ViewStyle;
+  /** Accessibility label */
+  accessibilityLabel?: string;
 }
 
 const TRACK_WIDTH = 52;
@@ -38,6 +40,7 @@ const Toggle = ({
   inactiveColor = "#D1D5DB",
   thumbColor = "#FFFFFF",
   style,
+  accessibilityLabel,
 }: ToggleProps) => {
   const progress = useSharedValue(value ? 1 : 0);
 
@@ -76,6 +79,7 @@ const Toggle = ({
       disabled={disabled}
       accessibilityRole="switch"
       accessibilityState={{ checked: value, disabled }}
+      accessibilityLabel={accessibilityLabel}
       style={style}
     >
       <Animated.View

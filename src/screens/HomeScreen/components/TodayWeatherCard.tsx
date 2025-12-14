@@ -38,6 +38,8 @@ const TodayWeatherCard = ({
 
   const accentColor = "#3B82F6";
 
+  const accessibilityLabel = `Current weather in ${cityName}: ${currentTemp} degrees, ${weatherDescription}. High ${maxTemp} degrees, Low ${minTemp} degrees`;
+
   return (
     <Box
       style={[
@@ -50,6 +52,9 @@ const TodayWeatherCard = ({
               : "rgba(0, 0, 0, 0.06)",
         },
       ]}
+      accessible
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="summary"
     >
       {/* City Name */}
       <Text.Header2 style={[styles.cityName, { color: colors.textPrimary }]}>

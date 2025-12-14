@@ -18,7 +18,12 @@ const SuggestionItem = ({ cityName, state, country, onPress }: Props) => {
     .join(", ");
 
   return (
-    <Pressable onPress={onPress} accessibilityLabel={accessibilityLabel}>
+    <Pressable
+      onPress={onPress}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint="Double tap to view weather"
+      accessibilityRole="button"
+    >
       <Box
         direction="row"
         hasPadding
