@@ -1,8 +1,10 @@
 import { fetchForecast } from "@/src/utils/fetchForecast";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 const useFetchWeather = () => {
+  const queryClient = useQueryClient();
+
   const [coordinates, setCoordinates] = useState<{
     lat: number;
     lon: number;
@@ -44,7 +46,15 @@ const useFetchWeather = () => {
     setCoordinates({ lat, lon });
   };
 
+  // Add this function to clear the data
+  const resetWeatherData = () => {
+    setSelectedCity(null);
+    setCoordinates(null);
+    queryClient.setQueryData(["weather", coordinates], null);
+  };
+
   return {
+    resetWeatherData,
     fetchWeatherData,
     data,
     error,

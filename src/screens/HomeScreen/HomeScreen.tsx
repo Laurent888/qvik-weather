@@ -22,14 +22,22 @@ const HomeScreen = () => {
   const { colors, theme } = useTheme();
 
   const [city, setCity] = useState<string>("");
-  const [suggestions, setSuggestions] = useState<GeocodingResponse>([]);
+  const [suggestions, setSuggestions] = useState<GeocodingResponse | null>(
+    null
+  );
 
-  const { fetchWeatherData, data, error, selectedCity, isFetching } =
-    useFetchWeather();
+  const {
+    fetchWeatherData,
+    resetWeatherData,
+    data,
+    error,
+    selectedCity,
+    isFetching,
+  } = useFetchWeather();
 
   const handleChangeCity = (text: string) => {
     if (text.length < 3) {
-      setSuggestions([]);
+      setSuggestions(null);
     }
 
     setCity(text);
@@ -44,6 +52,11 @@ const HomeScreen = () => {
     if (geocoding) {
       const filteredGeocoding = filterOutDuplicatesByCountryCode(geocoding);
       setSuggestions(filteredGeocoding);
+
+      // Clear previous weather data if no suggestions found
+      if (filteredGeocoding.length === 0) {
+        resetWeatherData();
+      }
     }
   };
 
@@ -61,6 +74,22 @@ const HomeScreen = () => {
   };
 
   const renderContent = () => {
+    if (suggestions == null) {
+      return null;
+    }
+
+    if (suggestions.length === 0 && !isFetching && data == null) {
+      return (
+        <Box>
+          <Text.Body
+            style={{ paddingVertical: 8, color: colors.textSecondary }}
+          >
+            No cities found. Please check the spelling and try again.
+          </Text.Body>
+        </Box>
+      );
+    }
+
     if (suggestions.length > 0) {
       return (
         <Box style={styles.suggestionsContainer}>
